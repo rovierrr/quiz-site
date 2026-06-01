@@ -1,0 +1,435 @@
+
+<style>
+:root{
+  --primary:#534AB7;
+  --success:#3B6D11;
+  --success-bg:#EAF3DE;
+  --danger:#A32D2D;
+  --danger-bg:#FCEBEB;
+
+  --radius-sm:10px;
+  --radius-md:14px;
+  --radius-lg:20px;
+
+  --shadow-sm:0 2px 8px rgba(0,0,0,.05);
+  --shadow-md:0 6px 18px rgba(0,0,0,.08);
+}
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+body{
+  font-family:Inter,system-ui,sans-serif;
+  font-size:14px;
+  line-height:1.6;
+  color:var(--color-text-primary);
+}
+
+#root{
+  max-width:800px;
+  margin:auto;
+}
+
+.opt{
+  display:flex;
+  align-items:center;
+  gap:12px;
+
+  width:100%;
+  min-height:52px;
+
+  padding:14px 16px;
+  margin-bottom:12px;
+
+  background:var(--color-background-primary);
+  border:1px solid var(--color-border-secondary);
+  border-radius:var(--radius-md);
+
+  font-size:13px;
+  text-align:left;
+  color:var(--color-text-primary);
+
+  cursor:pointer;
+  transition:
+    transform .15s ease,
+    background .15s ease,
+    border-color .15s ease,
+    box-shadow .15s ease;
+}
+
+.opt:hover:not(:disabled){
+  transform:translateY(-1px);
+  box-shadow:var(--shadow-sm);
+  border-color:var(--primary);
+}
+
+.opt:active:not(:disabled){
+  transform:translateY(0);
+}
+
+.opt:disabled{
+  cursor:default;
+}
+
+.opt.correct{
+  background:var(--success-bg);
+  border-color:var(--success);
+  color:#27500A;
+}
+
+.opt.wrong{
+  background:var(--danger-bg);
+  border-color:var(--danger);
+  color:#791F1F;
+}
+
+.icon-r{
+  font-size:18px;
+  flex-shrink:0;
+  opacity:0;
+}
+
+.opt.correct .icon-r,
+.opt.wrong .icon-r{
+  opacity:1;
+}
+
+.tag{
+  display:inline-flex;
+  align-items:center;
+
+  padding:6px 12px;
+  margin-bottom:16px;
+
+  border-radius:999px;
+
+  font-size:11px;
+  font-weight:600;
+  letter-spacing:.3px;
+}
+
+.top-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:10px;
+}
+
+.progress-bar{
+  height:8px;
+  margin-bottom:22px;
+
+  overflow:hidden;
+
+  background:var(--color-background-secondary);
+  border-radius:999px;
+}
+
+.progress-fill{
+  height:100%;
+  border-radius:999px;
+  background:linear-gradient(
+    90deg,
+    #534AB7,
+    #7167E8
+  );
+
+  transition:width .4s ease;
+}
+
+.explain{
+  margin-top:14px;
+  padding:14px 16px;
+
+  border-left:4px solid;
+  border-radius:var(--radius-sm);
+
+  font-size:13px;
+  line-height:1.7;
+}
+
+.explain.ok{
+  background:var(--success-bg);
+  border-color:var(--success);
+  color:#27500A;
+}
+
+.explain.fail{
+  background:var(--danger-bg);
+  border-color:var(--danger);
+  color:#791F1F;
+}
+
+#next-btn{
+  border:none;
+  border-radius:12px;
+
+  padding:12px 24px;
+
+  background:var(--primary);
+  color:white;
+
+  font-size:13px;
+  font-weight:600;
+
+  cursor:pointer;
+
+  transition:
+    transform .15s ease,
+    opacity .15s ease;
+}
+
+#next-btn:hover{
+  transform:translateY(-1px);
+}
+
+#next-btn:active{
+  transform:translateY(0);
+}
+
+.score-card{
+  background:var(--color-background-primary);
+
+  border:1px solid var(--color-border-secondary);
+  border-radius:var(--radius-lg);
+
+  padding:2rem;
+
+  box-shadow:var(--shadow-md);
+}
+
+.bar-row{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:12px;
+}
+
+.bar-label{
+  width:150px;
+  font-size:12px;
+  color:var(--color-text-secondary);
+}
+
+.bar-bg{
+  flex:1;
+  height:8px;
+
+  overflow:hidden;
+
+  background:var(--color-background-secondary);
+  border-radius:999px;
+}
+
+.bar-fill{
+  height:100%;
+  border-radius:999px;
+  transition:width .5s ease;
+}
+
+@media (max-width:600px){
+
+  .score-card{
+    padding:1.25rem;
+  }
+
+  .bar-row{
+    flex-wrap:wrap;
+  }
+
+  .bar-label{
+    width:100%;
+  }
+
+  .opt{
+    padding:13px 14px;
+  }
+
+  #next-btn{
+    width:100%;
+  }
+}
+</style>
+
+<div style="padding:1rem 0 2rem" id="root">
+  <div id="quiz-area">
+    <div class="top-row">
+      <span style="font-size:12px;color:var(--color-text-tertiary)" id="counter">Pergunta 1 de 20</span>
+      <span style="font-size:12px;color:var(--color-text-tertiary)" id="score-lbl">Pontuação: 0</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+    <span class="tag" id="topic-tag"></span>
+    <p style="font-size:14px;font-weight:500;line-height:1.6;margin-bottom:14px" id="qtext"></p>
+    <div id="opts"></div>
+    <div id="explain" style="display:none"></div>
+    <div style="margin-top:14px;display:flex;justify-content:flex-end">
+      <button id="next-btn" onclick="nextQ()" style="display:none;padding:10px 22px;font-size:13px;min-height:44px">Próxima →</button>
+    </div>
+  </div>
+  <div id="final" style="display:none"></div>
+</div>
+
+<script>
+const ALL=[
+  {t:"Tratamento de Erros",c:"#EAF3DE",tc:"#27500A",q:"O que acontece quando ocorre uma exceção sem bloco try/catch a tratá-la?",o:["O programa ignora o erro e continua","A execução do programa é interrompida (crash)","O C# corrige automaticamente o erro","É lançada uma exceção diferente"],a:1,e:"Sem tratamento, quando ocorre um erro em runtime a execução é interrompida abruptamente."},
+  {t:"Tratamento de Erros",c:"#EAF3DE",tc:"#27500A",q:"Qual a ordem correta para múltiplos blocos catch?",o:["Do mais genérico para o mais específico","Do mais específico para o mais genérico","A ordem não importa","Só pode existir um catch por try"],a:1,e:"Os catch devem ir do mais específico (ex: FormatException) para o mais genérico (Exception). Caso contrário o compilador dá erro."},
+  {t:"Tratamento de Erros",c:"#EAF3DE",tc:"#27500A",q:"O bloco finally é:",o:["Obrigatório em todo try/catch","Opcional e executa sempre, haja ou não exceção","Opcional e só executa se não houver exceção","Obrigatório e só executa se houver exceção"],a:1,e:"O finally é opcional. Quando presente executa sempre, sendo normalmente usado para libertar recursos como fechar ficheiros."},
+  {t:"Tratamento de Erros",c:"#EAF3DE",tc:"#27500A",q:"Qual exceção é lançada ao aceder a um índice fora dos limites de um array?",o:["NullReferenceException","ArgumentException","IndexOutOfRangeException","InvalidOperationException"],a:2,e:"IndexOutOfRangeException é lançada quando um array é indexado com um valor inválido, como arr[arr.Length+1]."},
+  {t:"Tratamento de Erros",c:"#EAF3DE",tc:"#27500A",q:"Para criar uma exceção customizada em C#, a classe deve:",o:["Implementar a interface IException","Herdar da classe Exception","Ter o atributo [Serializable]","Ter obrigatoriamente um código de erro inteiro"],a:1,e:"Exceptions são classes. Para criar uma customizada basta herdar de Exception e chamar base(message) no construtor."},
+  {t:"Tratamento de Erros",c:"#EAF3DE",tc:"#27500A",q:"A palavra-chave throw serve para:",o:["Apanhar uma exceção existente","Ignorar uma exceção","Lançar uma exceção manualmente","Declarar um novo tipo de exceção"],a:2,e:"throw permite que o programador lance uma exceção específica quando uma condição inválida é detetada, ex: throw new Exception(\"mensagem\")."},
+  {t:"Tratamento de Erros",c:"#EAF3DE",tc:"#27500A",q:"As exceptions corrigem erros de programação?",o:["Sim, se usadas corretamente","Não, apenas permitem lidar com situações inesperadas em runtime","Sim, o C# usa-as para autocorrigir lógica","Só corrigem erros de lógica"],a:1,e:"Exceptions não corrigem bugs de programação. Apenas permitem tratar comportamentos inesperados em runtime de forma controlada."},
+  {t:"Tratamento de Erros",c:"#EAF3DE",tc:"#27500A",q:"Qual exceção é lançada ao converter a string \"100A\" para Double?",o:["ArgumentException","NullReferenceException","InvalidCastException","FormatException"],a:3,e:"FormatException é lançada quando uma string não está no formato correto para ser convertida — \"100A\" não é um número válido."},
+  {t:"Tratamento de Erros",c:"#EAF3DE",tc:"#27500A",q:"Qual é a melhor abordagem quando um objeto pode ser null antes de ser usado?",o:["Usar sempre try/catch","Verificar if (objeto == null) antes de usar","Usar o atributo [NotNull]","Ignorar, o EF protege automaticamente"],a:1,e:"É preferível prevenir verificando null antes de usar, em vez de depender de try/catch para tratar o erro depois."},
+
+  {t:"Entity Framework",c:"#E6F1FB",tc:"#0C447C",q:"O que significa ORM no contexto do Entity Framework?",o:["Object Runtime Manager","Object-Relational Mapping","Online Resource Model","Output Request Manager"],a:1,e:"ORM significa Object-Relational Mapping. O EF mapeia tabelas da base de dados em classes C# de forma automática."},
+  {t:"Entity Framework",c:"#E6F1FB",tc:"#0C447C",q:"Na abordagem Code First, qual é a sequência correta?",o:["BD existente → EF gera classes","Modelo visual → EF gera BD","Classes C# → EF gera a BD automaticamente","EF lê a BD e cria um modelo XML"],a:2,e:"No Code First o programador escreve as classes C# primeiro e o EF gera a base de dados automaticamente a partir delas."},
+  {t:"Entity Framework",c:"#E6F1FB",tc:"#0C447C",q:"Qual o papel do ChangeTracker no DbContext?",o:["Gera o SQL automaticamente","Regista o estado de cada entidade: Added, Modified, Deleted, Unchanged","Faz a ligação à string de conexão","Valida as propriedades das entidades"],a:1,e:"O ChangeTracker regista o estado de cada entidade em memória, permitindo ao EF saber quais as alterações a persistir no SaveChanges()."},
+  {t:"Entity Framework",c:"#E6F1FB",tc:"#0C447C",q:"Qual a boa prática ao usar o DbContext em WinForms?",o:["Guardar uma instância global no Form","Criar uma instância por operação com o padrão using","Criar o Context no construtor do Form","Partilhar uma instância estática entre todos os Forms"],a:1,e:"O DbContext deve ser criado e descartado por operação com o padrão using. Guardar instâncias causa lazy loading e inconsistências."},
+  {t:"Entity Framework",c:"#E6F1FB",tc:"#0C447C",q:"Como o EF reconhece automaticamente a chave primária de uma entidade?",o:["Com o atributo [PrimaryKey]","Com o tipo int obrigatoriamente","Pela propriedade chamada Id ou <NomeClasse>Id","Com o atributo [Key] sempre obrigatório"],a:2,e:"O EF reconhece automaticamente a chave primária em qualquer propriedade chamada Id ou <NomeClasse>Id, sem anotações adicionais."},
+  {t:"Entity Framework",c:"#E6F1FB",tc:"#0C447C",q:"Para que serve o método SaveChanges()?",o:["Recarrega dados da BD","Persiste todas as alterações pendentes na base de dados","Cria a base de dados se não existir","Limpa o ChangeTracker"],a:1,e:"SaveChanges() persiste na BD todas as alterações rastreadas pelo ChangeTracker (inserções, atualizações, remoções)."},
+  {t:"Entity Framework",c:"#E6F1FB",tc:"#0C447C",q:"O que são Navigation Properties numa entidade EF?",o:["Propriedades que mapeiam colunas da tabela","Propriedades que criam relações entre entidades","Propriedades com o atributo [Navigate]","Propriedades obrigatoriamente do tipo string"],a:1,e:"Navigation Properties criam relações entre entidades (ex: um Cozinheiro tem uma List<Prato>). As Scalar Properties é que mapeiam as colunas."},
+  {t:"Entity Framework",c:"#E6F1FB",tc:"#0C447C",q:"O que é BD Seeding?",o:["Apagar e recriar a BD automaticamente","Inicializar a BD com dados pré-definidos ao arrancar a app","Fazer backup da BD","Migrar a BD para uma nova versão"],a:1,e:"BD Seeding é preencher a BD com dados iniciais quando é criada, usando o método Seed() numa classe que herda de DropCreateDatabaseIfModelChanges."},
+
+  {t:"LINQ",c:"#EEEDFE",tc:"#3C3489",q:"O que significa LINQ?",o:["Linked Index Query","Language-Integrated Query","Linear In-memory Query","Logical Integration Query"],a:1,e:"LINQ significa Language-Integrated Query — consultas integradas diretamente na linguagem C#."},
+  {t:"LINQ",c:"#EEEDFE",tc:"#3C3489",q:"Em LINQ com DbContext, quando é que a query SQL é executada na base de dados?",o:["Quando se escreve o Where()","Quando se escreve o Select()","Quando se chama .ToList() ou equivalente","Quando o DbContext é instanciado"],a:2,e:"O LINQ usa execução diferida. A query SQL só é executada quando se chama .ToList(), .First(), .Count() ou outro operador terminal."},
+  {t:"LINQ",c:"#EEEDFE",tc:"#3C3489",q:"Qual operador LINQ equivale a um INNER JOIN em SQL?",o:["GroupJoin","Where com duas condições","Join com on ... equals","SelectMany"],a:2,e:"O operador Join com a cláusula on ... equals é o equivalente direto do INNER JOIN em SQL."},
+  {t:"LINQ",c:"#EEEDFE",tc:"#3C3489",q:"O que devolve o operador GroupBy em LINQ?",o:["Uma List simples","IEnumerable<IGrouping<TKey,TElement>>","Um Dictionary<string, List<T>>","IQueryable<T>"],a:1,e:"GroupBy devolve IEnumerable<IGrouping<TKey,TElement>>. Cada grupo tem uma chave (.Key) e os elementos que lhe pertencem."},
+  {t:"LINQ",c:"#EEEDFE",tc:"#3C3489",q:"Qual a diferença entre Query Syntax e Method Syntax em LINQ?",o:["São linguagens diferentes","São equivalentes — os resultados são iguais","Method Syntax só funciona em memória","Query Syntax só funciona com SQL Server"],a:1,e:"As duas sintaxes são completamente equivalentes e intercambiáveis. Os objetos resultantes são iguais independentemente da sintaxe usada."},
+  {t:"LINQ",c:"#EEEDFE",tc:"#3C3489",q:"O que faz o operador FirstOrDefault()?",o:["Devolve o primeiro elemento ou lança exceção se vazio","Devolve o primeiro elemento ou null/default se vazio","Devolve todos os elementos","Devolve o último elemento"],a:1,e:"FirstOrDefault() devolve o primeiro elemento que satisfaz a condição, ou null/default se não existir nenhum — sem lançar exceção."},
+  {t:"LINQ",c:"#EEEDFE",tc:"#3C3489",q:"Para que serve o operador Distinct() em LINQ?",o:["Ordena os elementos","Remove elementos duplicados","Filtra por uma condição","Agrupa elementos iguais"],a:1,e:"Distinct() remove elementos duplicados da coleção, devolvendo apenas valores únicos."},
+  {t:"LINQ",c:"#EEEDFE",tc:"#3C3489",q:"O que fazem os operadores Skip(n) e Take(n)?",o:["Skip filtra; Take ordena","Skip salta os primeiros n elementos; Take pega nos próximos n","Take filtra; Skip ordena","São equivalentes ao GroupBy"],a:1,e:"Skip(n) ignora os primeiros n elementos e Take(n) seleciona os próximos n — muito usados juntos para paginação."},
+
+  {t:"Padrões de Arquitetura",c:"#FAECE7",tc:"#712B13",q:"No padrão MVC, qual componente nunca deve manipular dados diretamente?",o:["Model","Controller","View","DbContext"],a:2,e:"A View é responsável apenas pela apresentação. Nunca deve manipular dados do Model diretamente — essa responsabilidade é do Controller."},
+  {t:"Padrões de Arquitetura",c:"#FAECE7",tc:"#712B13",q:"O princípio DRY significa:",o:["Cada componente tem uma única responsabilidade","Não repetir código — abstrair para reutilizar","Separar dados da interface gráfica","Criar interfaces para cada funcionalidade"],a:1,e:"DRY (Don't Repeat Yourself): código repetido deve ser abstraído para ser implementado uma vez e reutilizável onde necessário."},
+  {t:"Padrões de Arquitetura",c:"#FAECE7",tc:"#712B13",q:"Numa aplicação WinForms com MVC, onde deve ficar o código do Entity Framework?",o:["Nos event handlers do Form","Na classe Program.cs","No Controller","No próprio DbContext"],a:2,e:"O Controller contém a lógica incluindo o acesso ao EF. Os forms (View) chamam métodos do Controller e apenas tratam da apresentação."},
+  {t:"Padrões de Arquitetura",c:"#FAECE7",tc:"#712B13",q:"O que define o princípio Separation of Concerns?",o:["Cada método deve ter menos de 10 linhas","O código de cada responsabilidade deve ser segregado das restantes","Todas as classes devem estar na mesma pasta","A UI deve ser desenvolvida por outra equipa"],a:1,e:"Separation of Concerns: o código de cada responsabilidade deve ser segregado das restantes — dados, lógica e UI devem estar sempre separados."},
+  {t:"Padrões de Arquitetura",c:"#FAECE7",tc:"#712B13",q:"Qual é a responsabilidade do componente Model no MVC?",o:["Apresentar dados ao utilizador","Receber inputs do utilizador","Acesso, manipulação de dados e lógica de negócio","Coordenar View e Controller"],a:2,e:"O Model gere acesso e manipulação de dados, regras de persistência e lógica de negócio. Não deve conhecer a View nem o Controller."},
+  {t:"Padrões de Arquitetura",c:"#FAECE7",tc:"#712B13",q:"Qual é a responsabilidade do Controller no MVC?",o:["Apenas mostrar dados ao utilizador","Gerir a base de dados diretamente","Receber inputs da View, coordenar Model e View","Guardar o estado da aplicação em ficheiros"],a:2,e:"O Controller recebe inputs da View, manipula o Model se necessário, e notifica a View de alterações — coordena a interação entre os dois."},
+  {t:"Padrões de Arquitetura",c:"#FAECE7",tc:"#712B13",q:"Qual é uma desvantagem do uso de padrões de arquitetura?",o:["Pior qualidade de software","Mais difícil reutilização de código","Aumenta a complexidade de desenvolvimento inicial","Impossibilita o uso de Entity Framework"],a:2,e:"Uma desvantagem real dos padrões é que aumentam a complexidade inicial e requerem mais experiência da equipa de desenvolvimento."},
+
+  {t:"Ficheiros",c:"#FAEEDA",tc:"#633806",q:"Qual a diferença entre FileMode.Create e FileMode.Append?",o:["Create cria novo substituindo se existir; Append adiciona ao fim","Append cria novo; Create adiciona ao fim","São equivalentes","Create só funciona com BinaryWriter"],a:0,e:"FileMode.Create substitui o ficheiro se já existir. FileMode.Append adiciona dados ao fim, criando o ficheiro se não existir."},
+  {t:"Ficheiros",c:"#FAEEDA",tc:"#633806",q:"Para serializar um objeto em JSON no .NET moderno, qual a abordagem correta?",o:["Usar BinaryFormatter.Serialize()","Usar XmlSerializer.Serialize()","Usar JsonSerializer.Serialize() de System.Text.Json","Usar StreamWriter e escrever o objeto diretamente"],a:2,e:"O método moderno é JsonSerializer.Serialize() do namespace System.Text.Json. O BinaryFormatter foi descontinuado no .NET 9 por questões de segurança."},
+  {t:"Ficheiros",c:"#FAEEDA",tc:"#633806",q:"O que é um Stream no contexto de ficheiros?",o:["Um tipo especial de ficheiro de texto","Um fluxo de informação entre localizações (ex: RAM → disco)","Uma classe para ler apenas ficheiros binários","Um método da classe File"],a:1,e:"Stream é um fluxo de informação que circula de um local para outro (ex: RAM para disco). É a base de toda a manipulação de ficheiros em .NET."},
+  {t:"Ficheiros",c:"#FAEEDA",tc:"#633806",q:"Qual a diferença entre ficheiros de texto e binários?",o:["Ficheiros de texto são mais rápidos","Binários usam delimitadores; os de texto não","Texto usa delimitadores; binários determinam o tipo pelo número de bytes","Não há diferença prática"],a:2,e:"Nos ficheiros de texto os campos são separados por delimitadores (ex: ;). Nos binários o tipo é determinado pela quantidade de bytes escritos/lidos."},
+  {t:"Ficheiros",c:"#FAEEDA",tc:"#633806",q:"Que método da BinaryReader verifica se há mais dados a ler?",o:["HasMore()","EOF()","PeekChar() != -1","ReadBool()"],a:2,e:"PeekChar() devolve -1 quando não há mais bytes a ler, sendo usado no ciclo while para controlar o fim do ficheiro."},
+  {t:"Ficheiros",c:"#FAEEDA",tc:"#633806",q:"Para que serve Path.Combine()?",o:["Cria um ficheiro novo no caminho indicado","Constrói um caminho completo de forma segura a partir de partes","Verifica se um caminho existe","Move ficheiros de um caminho para outro"],a:1,e:"Path.Combine() constrói o caminho completo de forma segura e independente do SO, ex: Path.Combine(@\"C:\\temp\", \"file.txt\")."},
+  {t:"Ficheiros",c:"#FAEEDA",tc:"#633806",q:"Qual a diferença entre OpenFileDialog e SaveFileDialog?",o:["São equivalentes","OpenFileDialog só aceita ficheiros existentes (leitura); SaveFileDialog permite novo nome (escrita)","SaveFileDialog só aceita ficheiros existentes","OpenFileDialog é para escrita"],a:1,e:"OpenFileDialog só permite selecionar ficheiros existentes, usado para leitura. SaveFileDialog permite introduzir um novo nome, usado para escrita."},
+  {t:"Ficheiros",c:"#FAEEDA",tc:"#633806",q:"Para que serve o atributo [Serializable] numa classe?",o:["Indica que a classe pode ser usada com LINQ","Permite que os objetos da classe sejam serializados em bytes","Indica que a classe herda de DbContext","Desativa a garbage collection para os objetos"],a:1,e:"[Serializable] indica que os objetos da classe podem ser convertidos num fluxo de bytes para serem guardados ou transmitidos."},
+];
+
+const NQUESTIONS=20;
+let quiz=[],cur=0,score=0,answered=false,results=[];
+
+function shuffle(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+
+function pickQuestions(){
+  const byTopic={};
+  ALL.forEach(q=>{if(!byTopic[q.t])byTopic[q.t]=[];byTopic[q.t].push(q);});
+  let sel=[];
+  Object.values(byTopic).forEach(arr=>{ sel=sel.concat(shuffle(arr).slice(0,4)); });
+  sel=shuffle(sel).slice(0,NQUESTIONS);
+  return sel.map(q=>{
+    const shuffled=shuffle(q.o.map((text,i)=>({text,orig:i})));
+    const newAns=shuffled.findIndex(x=>x.orig===q.a);
+    return {t:q.t,c:q.c,tc:q.tc,q:q.q,o:shuffled.map(x=>x.text),a:newAns,e:q.e};
+  });
+}
+
+function start(){
+  quiz=pickQuestions();
+  cur=0;score=0;answered=false;results=[];
+  document.getElementById('quiz-area').style.display='block';
+  document.getElementById('final').style.display='none';
+  render();
+}
+
+function render(){
+  const q=quiz[cur];
+  document.getElementById('counter').textContent='Pergunta '+(cur+1)+' de '+quiz.length;
+  document.getElementById('score-lbl').textContent='Pontuação: '+score;
+  document.getElementById('prog').style.width=Math.round((cur/quiz.length)*100)+'%';
+  const tag=document.getElementById('topic-tag');
+  tag.textContent=q.t;tag.style.background=q.c;tag.style.color=q.tc;
+  document.getElementById('qtext').textContent=q.q;
+  const opts=document.getElementById('opts');
+  opts.innerHTML='';
+  q.o.forEach((txt,i)=>{
+    const b=document.createElement('button');
+    b.className='opt';
+    b.innerHTML='<i class="ti ti-circle icon-r" aria-hidden="true"></i><span>'+txt+'</span>';
+    b.addEventListener('click',function(){select(i);});
+    opts.appendChild(b);
+  });
+  document.getElementById('explain').style.display='none';
+  document.getElementById('next-btn').style.display='none';
+  answered=false;
+}
+
+function select(idx){
+  if(answered)return;
+  answered=true;
+  const q=quiz[cur];
+  const correct=q.a;
+  const btns=document.querySelectorAll('.opt');
+  btns.forEach(function(b){b.disabled=true;});
+  const ok=(idx===correct);
+  if(ok){
+    score++;
+    btns[idx].classList.add('correct');
+    btns[idx].querySelector('.icon-r').className='ti ti-check icon-r';
+  } else {
+    btns[idx].classList.add('wrong');
+    btns[idx].querySelector('.icon-r').className='ti ti-x icon-r';
+    btns[correct].classList.add('correct');
+    btns[correct].querySelector('.icon-r').className='ti ti-check icon-r';
+  }
+  document.getElementById('score-lbl').textContent='Pontuação: '+score;
+  const exp=document.getElementById('explain');
+  exp.className='explain '+(ok?'ok':'fail');
+  exp.innerHTML=(ok?'<b>Correto!</b> ':'<b>Errado.</b> ')+q.e;
+  exp.style.display='block';
+  results.push({topic:q.t,correct:ok});
+  const nb=document.getElementById('next-btn');
+  nb.style.display='inline-block';
+  nb.textContent=(cur+1<quiz.length)?'Próxima →':'Ver resultados →';
+}
+
+function nextQ(){
+  cur++;
+  if(cur>=quiz.length){showFinal();return;}
+  render();
+}
+
+function showFinal(){
+  document.getElementById('prog').style.width='100%';
+  document.getElementById('quiz-area').style.display='none';
+  const pct=Math.round((score/quiz.length)*100);
+  let msg,mc;
+  if(pct>=90){msg='Excelente! Dominas muito bem a matéria.';mc='#3B6D11';}
+  else if(pct>=70){msg='Bom resultado! Revê os temas onde erraste.';mc='#854F0B';}
+  else if(pct>=50){msg='Resultado razoável. Vale a pena rever o resumo.';mc='#185FA5';}
+  else{msg='Precisas de estudar mais. Relê o resumo com atenção.';mc='#A32D2D';}
+  const ts={};
+  results.forEach(function(r){if(!ts[r.topic])ts[r.topic]={c:0,t:0};ts[r.topic].t++;if(r.correct)ts[r.topic].c++;});
+  const tc2={'Tratamento de Erros':'#3B6D11','Entity Framework':'#185FA5','LINQ':'#534AB7','Padrões de Arquitetura':'#993C1D','Ficheiros':'#854F0B'};
+  let bars='';
+  Object.keys(ts).forEach(function(topic){
+    const s=ts[topic];
+    const p=Math.round((s.c/s.t)*100);
+    const col=tc2[topic]||'#534AB7';
+    bars+='<div class="bar-row"><span class="bar-label">'+topic+'</span><div class="bar-bg"><div class="bar-fill" style="width:'+p+'%;background:'+col+'"></div></div><span style="min-width:34px;text-align:right;color:var(--color-text-secondary);font-size:12px">'+s.c+'/'+s.t+'</span></div>';
+  });
+  const f=document.getElementById('final');
+  f.style.display='block';
+  f.innerHTML='<div class="score-card"><div style="font-size:44px;font-weight:500;color:'+mc+';line-height:1">'+score+'<span style="font-size:18px;color:var(--color-text-tertiary)">/'+quiz.length+'</span></div><div style="font-size:22px;font-weight:500;margin:4px 0 8px;color:'+mc+'">'+pct+'%</div><p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:1.5rem">'+msg+'</p><div style="text-align:left;border-top:0.5px solid var(--color-border-tertiary);padding-top:1rem;margin-bottom:1.5rem"><p style="font-size:12px;font-weight:500;margin-bottom:10px;color:var(--color-text-secondary)">Desempenho por tema</p>'+bars+'</div><button onclick="start()" style="padding:12px 24px;font-size:13px;min-height:44px;width:100%">Novo quiz (perguntas diferentes) →</button></div>';
+}
+
+start();
+</script>
